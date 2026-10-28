@@ -234,8 +234,13 @@ async function analyzeMarket(){
       $("sl").textContent=fmt(planDirection==="buy"?entry-distance:entry+distance);
       $("tp").textContent=fmt(planDirection==="buy"?entry+distance*2:entry-distance*2);
       if(signal==="PA SINJAL"){
-        why += " Nivelet Entry/SL/TP janë vetëm skenar orientues në drejtimin "+(planDirection==="buy"?"BUY":"SELL")+". Nuk është sinjal i konfirmuar; mos e trajto si urdhër tregtie.";
-        $("updated").textContent="Analiza: "+new Date().toLocaleTimeString("sq-AL")+" · Plan orientues, pa konfirmim";
+        // Make the main status match the direction used for Entry/SL/TP,
+        // while clearly marking that it is a directional setup, not a fully confirmed signal.
+        const directionLabel=planDirection==="buy"?"BUY · ORIENTUES":"SELL · ORIENTUES";
+        $("signal").textContent=directionLabel;
+        $("signal").className="signal "+(planDirection==="buy"?"buy":"sell");
+        why = "Drejtimi orientues bazohet te trendi M30 dhe pikët e konfluencës. Konfirmimi nuk është i plotë; Entry/SL/TP janë nivele indikative, jo urdhër tregtie.";
+        $("updated").textContent="Analiza: "+new Date().toLocaleTimeString("sq-AL")+" · Drejtim orientues";
       }
     } else {
       $("entry").textContent=$("sl").textContent=$("tp").textContent="—";
