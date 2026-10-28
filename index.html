@@ -139,9 +139,9 @@ function atr(bars,period=14){
 
 function analyze(bars,tf){
   const closes=bars.map(b=>b.close);
-  if(bars.length<210) throw new Error("Nuk ka mjaft qirinj të mbyllur për analizën "+tf+".");
+  if(bars.length<85) throw new Error("Ka vetëm "+bars.length+" qirinj të mbyllur për "+tf+"; duhen të paktën 85.");
   return {bars,closes,last:closes[closes.length-1],ema20:ema(closes,20),ema50:ema(closes,50),
-    ema200:ema(closes,200),rsi:rsi(closes),atr:atr(bars)};
+    ema80:ema(closes,80),rsi:rsi(closes),atr:atr(bars)};
 }
 
 async function updatePrice(){
@@ -162,8 +162,8 @@ async function analyzeMarket(){
   try{
     const [raw15,raw5]=await Promise.all([getCandles("15m"),getCandles("5m")]);
     const m15=analyze(raw15,"M15"),m5=analyze(raw5,"M5");
-    const up=m15.ema50>m15.ema200&&m15.last>m15.ema50;
-    const down=m15.ema50<m15.ema200&&m15.last<m15.ema50;
+    const up=m15.ema50>m15.ema80&&m15.last>m15.ema50;
+    const down=m15.ema50<m15.ema80&&m15.last<m15.ema50;
 
     $("trend").textContent=up?"NË RRITJE":down?"NË RËNIE":"ANËSOR / I PËRZIER";
     $("trend").className="value "+(up?"buy":down?"sell":"neutral");
