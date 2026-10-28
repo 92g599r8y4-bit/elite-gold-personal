@@ -55,12 +55,12 @@ footer{text-align:center;color:var(--muted);font-size:11px;padding:22px}
 <section class="card">
 <div class="label">Analiza e tregut · Price Action</div>
 <button class="goldbtn" id="signalBtn" type="button" style="width:100%;margin-top:12px">📊 MERR SINJALIN</button>
-<p class="small">Shtype butonin për të marrë analizë të re. M15/M30, Price Action, EMA, RSI dhe ATR analizohen së bashku. Edhe kur nuk ka konfirmim BUY/SELL, nivelet mund të shfaqen si skenar orientues, të shënuara qartë.</p>
+<p class="small">Shtype butonin për të marrë analizë të re. H4 përcakton drejtimin, H1 konfirmon trendin, M15 kërkon hyrjen me Price Action, EMA, RSI dhe ATR. Edhe kur nuk ka konfirmim BUY/SELL, nivelet mund të shfaqen si skenar orientues, të shënuara qartë.</p>
 <div class="grid" style="margin-top:13px">
-<div class="box"><div class="label">Trendi M15</div><div class="value" id="trend">Në pritje</div></div>
-<div class="box"><div class="label">Trendi M30</div><div class="value" id="confirm">Në pritje</div></div>
+<div class="box"><div class="label">Trendi H4</div><div class="value" id="trend">Në pritje</div></div>
+<div class="box"><div class="label">Trendi H1</div><div class="value" id="confirm">Në pritje</div></div>
 <div class="box"><div class="label">Price Action M15</div><div class="value" id="pa15">Në pritje</div></div>
-<div class="box"><div class="label">Price Action M30</div><div class="value" id="pa30">Në pritje</div></div>
+<div class="box"><div class="label">Price Action H1</div><div class="value" id="pa30">Në pritje</div></div>
 </div>
 <div class="signal neutral" id="signal">DUKE ANALIZUAR</div>
 <div class="small" id="reason">Po merren të dhënat e qirinjve të Gold.</div>
@@ -108,7 +108,7 @@ footer{text-align:center;color:var(--muted);font-size:11px;padding:22px}
 <p class="small">Sinjali rifreskohet kur shtyp butonin dhe automatikisht çdo 60 sekonda. Përdoren qirinjtë e mbyllur. Sinjalet nuk garantojnë fitim dhe fillimisht duhen testuar në demo.</p>
 <div class="notice">Ky dashboard nuk është Expert Advisor dhe nuk hap tregti. Çmimet e burimeve publike mund të ndryshojnë nga bid/ask dhe spread-i i TIOmarkets.</div>
 </section>
-<footer>ELITE GOLD AI · XAUUSD · M15 + M30 · PRICE ACTION · TRADINGVIEW</footer>
+<footer>ELITE GOLD AI · XAUUSD · H4 + H1 + M15 · PRICE ACTION · TRADINGVIEW</footer>
 </main>
 
 <script>
@@ -203,42 +203,39 @@ function priceAction(a){
 
 async function analyzeMarket(){
   const btn=$("signalBtn"); if(btn) btn.disabled=true;
-  $("status").textContent="Po kontrollohen qirinjtë M15/M30 dhe Price Action...";
+  $("status").textContent="Po analizohen H4, H1, M15, Price Action, EMA, RSI dhe ATR...";
   try{
-    const [raw15,raw30]=await Promise.all([getCandles("15m"),getCandles("30m")]);
-    const m15=analyze(raw15,"M15"),m30=analyze(raw30,"M30");
-    const pa15=priceAction(m15),pa30=priceAction(m30);
+    const [rawH4,rawH1,raw15]=await Promise.all([getCandles("4h"),getCandles("1h"),getCandles("15m")]);
+    const h4=analyze(rawH4,"H4"),h1=analyze(rawH1,"H1"),m15=analyze(raw15,"M15");
+    const pa15=priceAction(m15),pa1=priceAction(h1);
+    const up4=h4.last>h4.ema50 && h4.ema20>h4.ema50;
+    const down4=h4.last<h4.ema50 && h4.ema20<h4.ema50;
+    const up1=h1.last>h1.ema50 && h1.ema20>h1.ema50;
+    const down1=h1.last<h1.ema50 && h1.ema20<h1.ema50;
     const up15=m15.last>m15.ema50 && m15.ema20>m15.ema50;
     const down15=m15.last<m15.ema50 && m15.ema20<m15.ema50;
-    const up30=m30.last>m30.ema50 && m30.ema20>m30.ema50;
-    const down30=m30.last<m30.ema50 && m30.ema20<m30.ema50;
-    $("trend").textContent=up15?"NË RRITJE":down15?"NË RËNIE":"ANËSOR / I PËRZIER";
-    $("trend").className="value "+(up15?"buy":down15?"sell":"neutral");
-    $("confirm").textContent=up30?"NË RRITJE":down30?"NË RËNIE":"ANËSOR / I PËRZIER";
-    $("confirm").className="value "+(up30?"buy":down30?"sell":"neutral");
-    $("pa15").textContent=pa15.bias; $("pa30").textContent=pa30.bias;
+    $("trend").textContent=up4?"NË RRITJE":down4?"NË RËNIE":"ANËSOR / I PËRZIER";
+    $("trend").className="value "+(up4?"buy":down4?"sell":"neutral");
+    $("confirm").textContent=up1?"NË RRITJE":down1?"NË RËNIE":"ANËSOR / I PËRZIER";
+    $("confirm").className="value "+(up1?"buy":down1?"sell":"neutral");
+    $("pa15").textContent=pa15.bias; $("pa30").textContent=pa1.bias;
     $("pa15").className="value "+(pa15.dir==="buy"?"buy":pa15.dir==="sell"?"sell":"neutral");
-    $("pa30").className="value "+(pa30.dir==="buy"?"buy":pa30.dir==="sell"?"sell":"neutral");
+    $("pa30").className="value "+(pa1.dir==="buy"?"buy":pa1.dir==="sell"?"sell":"neutral");
     $("rsi").textContent=fmt(m15.rsi);
-    // Confluence scoring: M30 direction is the bias; M15 trend, Price Action and RSI are confirmations.
-    let signal="PA SINJAL",why="Nuk ka ende konfluencë të mjaftueshme. Prit mbylljen e qiririt dhe provo përsëri.";
-    const buyScore=(up30?1:0)+(up15?1:0)+(pa15.dir==="buy"?1:0)+(pa30.dir==="buy"?1:0)+((m15.rsi>=45&&m15.rsi<=68)?1:0);
-    const sellScore=(down30?1:0)+(down15?1:0)+(pa15.dir==="sell"?1:0)+(pa30.dir==="sell"?1:0)+((m15.rsi>=32&&m15.rsi<=55)?1:0);
-    // Require the M30 bias plus at least two supporting confirmations. Avoid entries against M30.
-    if(up30&&buyScore>=3){signal="BUY";why="M30 bullish me të paktën dy konfirmime shtesë nga M15, Price Action ose RSI. Kontrollo chartin dhe spread-in para çdo tregtie.";}
-    else if(down30&&sellScore>=3){signal="SELL";why="M30 bearish me të paktën dy konfirmime shtesë nga M15, Price Action ose RSI. Kontrollo chartin dhe spread-in para çdo tregtie.";}
-    $("score").textContent=(signal==="BUY"?buyScore:signal==="SELL"?sellScore:Math.max(buyScore,sellScore))+" / 5";
+    let signal="PA SINJAL",why="H4, H1 dhe M15 nuk japin konfirmim të mjaftueshëm. Nivelet orientuese mund të shfaqen, por prit setup më të qartë.";
+    const buyScore=(up4?1:0)+(up1?1:0)+(up15?1:0)+(pa15.dir==="buy"?1:0)+(pa1.dir==="buy"?1:0)+((m15.rsi>=45&&m15.rsi<=68)?1:0);
+    const sellScore=(down4?1:0)+(down1?1:0)+(down15?1:0)+(pa15.dir==="sell"?1:0)+(pa1.dir==="sell"?1:0)+((m15.rsi>=32&&m15.rsi<=55)?1:0);
+    if(up4&&up1&&buyScore>=4){signal="BUY";why="H4 dhe H1 bullish, me të paktën dy konfirmime nga M15, Price Action dhe RSI.";}
+    else if(down4&&down1&&sellScore>=4){signal="SELL";why="H4 dhe H1 bearish, me të paktën dy konfirmime nga M15, Price Action dhe RSI.";}
+    $("score").textContent=(signal==="BUY"?buyScore:signal==="SELL"?sellScore:Math.max(buyScore,sellScore))+" / 6";
     const sigEl=$("signal"); sigEl.textContent=signal; sigEl.className="signal "+(signal==="BUY"?"buy":signal==="SELL"?"sell":"neutral");
-    // Always show a usable analysis plan after the button is pressed.
-    // If confirmation is insufficient, levels are shown as a scenario, NOT as a confirmed trade signal.
     const entry=m15.last;
     const volatility=Number.isFinite(m15.atr)?m15.atr:Math.abs(m15.last-m15.bars[m15.bars.length-2].close);
     const distance=Math.max(volatility*1.5,0.50);
-    let planDirection = signal==="BUY" ? "buy" : signal==="SELL" ? "sell" : "none";
+    let planDirection=signal==="BUY"?"buy":signal==="SELL"?"sell":"none";
     if(planDirection==="none"){
-      // Prefer the M30 bias; if M30 is mixed, use the combined score only when one side is clearer.
-      if(up30) planDirection="buy";
-      else if(down30) planDirection="sell";
+      if(up4&&up1) planDirection="buy";
+      else if(down4&&down1) planDirection="sell";
       else if(buyScore>sellScore) planDirection="buy";
       else if(sellScore>buyScore) planDirection="sell";
     }
@@ -247,28 +244,20 @@ async function analyzeMarket(){
       $("sl").textContent=fmt(planDirection==="buy"?entry-distance:entry+distance);
       $("tp").textContent=fmt(planDirection==="buy"?entry+distance*2:entry-distance*2);
       if(signal==="PA SINJAL"){
-        // Make the main status match the direction used for Entry/SL/TP,
-        // while clearly marking that it is a directional setup, not a fully confirmed signal.
-        const directionLabel=planDirection==="buy"?"BUY · ORIENTUES":"SELL · ORIENTUES";
-        $("signal").textContent=directionLabel;
+        $("signal").textContent=(planDirection==="buy"?"BUY":"SELL")+" · ORIENTUES";
         $("signal").className="signal "+(planDirection==="buy"?"buy":"sell");
-        why = "Drejtimi orientues bazohet te trendi M30 dhe pikët e konfluencës. Konfirmimi nuk është i plotë; Entry/SL/TP janë nivele indikative, jo urdhër tregtie.";
-        $("updated").textContent="Analiza: "+new Date().toLocaleTimeString("sq-AL")+" · Drejtim orientues";
+        why += " Nivelet Entry/SL/TP janë orientuese, jo sinjal i konfirmuar.";
       }
-    } else {
-      $("entry").textContent=$("sl").textContent=$("tp").textContent="—";
-      why += " Nuk ka drejtim të dallueshëm as për plan orientues; prandaj nuk shpiken nivele.";
-    }
+    } else $("entry").textContent=$("sl").textContent=$("tp").textContent="—";
     $("reason").textContent=why;
-    $("updated").textContent="Analiza e fundit: "+new Date().toLocaleTimeString("sq-AL")+" · M15/M30 · Price Action";
+    $("updated").textContent="Analiza e fundit: "+new Date().toLocaleTimeString("sq-AL")+" · H4/H1/M15 · Price Action";
     $("status").textContent="Analiza përfundoi. Sinjalet janë indikative, jo garanci fitimi.";
   }catch(e){
     $("signal").textContent="TË DHËNA TË PADISPONUESHME"; $("signal").className="signal neutral";
     $("reason").textContent=e.message||"Nuk mund të analizohet tregu.";
-    $("status").textContent="Gabim me API/qirinjtë. Provo përsëri pas pak.";
+    $("status").textContent="Gabim me API/qirinjtë. Kontrollo nëse API mbështet intervalet 4h dhe 1h.";
   }finally{if(btn) btn.disabled=false;}
 }
-
 async function refresh(){
   await Promise.all([updatePrice(),analyzeMarket()]);
 }
