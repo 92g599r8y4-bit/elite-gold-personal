@@ -1,269 +1,213 @@
 <!DOCTYPE html>
 <html lang="sq">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#0b0d12">
-  <title>ELITE GOLD AI</title>
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-    body {
-      margin: 0;
-      padding: 20px;
-      background: #0b0d12;
-      color: #f4f4f4;
-      font-family: Arial, sans-serif;
-    }
-    .container {
-      max-width: 600px;
-      margin: 0 auto;
-    }
-    .header {
-      text-align: center;
-      padding: 22px 10px;
-    }
-    .header h1 {
-      margin: 0;
-      color: #e7bd55;
-      font-size: 28px;
-      letter-spacing: 2px;
-    }
-    .header p {
-      color: #a5a5a5;
-      font-size: 13px;
-    }
-    .card {
-      background: #141821;
-      border: 1px solid #292e3a;
-      border-radius: 16px;
-      padding: 20px;
-      margin-bottom: 16px;
-    }
-    .label {
-      color: #a9afbd;
-      font-size: 13px;
-      margin-bottom: 10px;
-    }
-    .price {
-      color: #e7bd55;
-      font-size: 36px;
-      font-weight: bold;
-      overflow-wrap: anywhere;
-    }
-    .small {
-      color: #969cab;
-      font-size: 12px;
-      line-height: 1.6;
-      margin-top: 10px;
-    }
-    .row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      padding: 12px 0;
-      border-bottom: 1px solid #292e3a;
-    }
-    .row:last-child {
-      border-bottom: none;
-    }
-    .value {
-      font-weight: bold;
-      text-align: right;
-    }
-    .gold {
-      color: #e7bd55;
-    }
-    .green {
-      color: #54d69a;
-    }
-    .red {
-      color: #ff7373;
-    }
-    input {
-      width: 100%;
-      padding: 13px;
-      margin-top: 10px;
-      border: 1px solid #383e4c;
-      border-radius: 9px;
-      background: #0b0d12;
-      color: white;
-      font-size: 16px;
-    }
-    .buttons {
-      display: flex;
-      gap: 12px;
-      margin-top: 16px;
-    }
-    button {
-      flex: 1;
-      border: none;
-      border-radius: 10px;
-      padding: 14px;
-      font-size: 15px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    #start {
-      background: #e7bd55;
-      color: #111;
-    }
-    #stop {
-      background: #343a46;
-      color: white;
-    }
-    .notice {
-      padding: 13px;
-      background: #292211;
-      border: 1px solid #675323;
-      color: #e7d49c;
-      border-radius: 10px;
-      font-size: 12px;
-      line-height: 1.6;
-    }
-    .footer {
-      text-align: center;
-      color: #777e8c;
-      font-size: 11px;
-      padding: 16px 0;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ELITE GOLD AI</title>
+<style>
+:root{color-scheme:dark;--bg:#080d17;--card:#111a2b;--line:#26344c;--gold:#f6c453;--text:#edf2fa;--muted:#9eacc2;--green:#20d49a;--red:#ff6678}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,Arial,sans-serif;padding:18px}
+main{max-width:760px;margin:auto}
+header{text-align:center;padding:22px 8px}
+h1{color:var(--gold);font-size:29px;margin:0 0 8px;letter-spacing:1px}
+.sub{color:var(--muted);font-size:12px;letter-spacing:2px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin:13px 0}
+.label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+.price{font-size:34px;color:var(--gold);font-weight:800;margin:10px 0}
+.small{font-size:12px;color:var(--muted);line-height:1.6}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.box{background:#0b1220;border:1px solid var(--line);border-radius:11px;padding:13px;min-width:0}
+.value{font-weight:700;margin-top:8px;overflow-wrap:anywhere}
+.signal{text-align:center;font-size:27px;font-weight:900;padding:18px;border-radius:12px;background:#0b1220;margin:14px 0;color:var(--muted)}
+.buy{color:var(--green)!important}.sell{color:var(--red)!important}.neutral{color:var(--gold)!important}
+button{border:0;border-radius:10px;padding:12px 17px;font-weight:800;cursor:pointer}
+button:disabled{opacity:.5}
+.goldbtn{background:var(--gold);color:#111827}
+input{width:100%;padding:12px;background:#0b1220;border:1px solid var(--line);border-radius:9px;color:white;margin-top:8px;font-size:16px}
+.notice{border-left:3px solid var(--gold);padding:10px 12px;background:#0b1220;color:var(--muted);font-size:12px;line-height:1.6}
+footer{text-align:center;color:var(--muted);font-size:11px;padding:22px}
+@media(max-width:420px){body{padding:11px}.price{font-size:29px}.card{padding:14px}}
+</style>
 </head>
 <body>
-  <main class="container">
-    <header class="header">
-      <h1>ELITE GOLD AI</h1>
-      <p>PERSONAL GOLD DASHBOARD</p>
-    </header>
-    <section class="card">
-      <div class="label">XAUUSD · GOLD SPOT PRICE</div>
-      <div id="gold-price" class="price">Duke u lidhur...</div>
-      <div id="price-status" class="small">
-        Po kërkohet çmimi nga serveri.
-      </div>
-      <div class="small">
-        Burimi: XAUS · Çmim orientues spot, jo kuotim i garantuar i brokerit.
-      </div>
-    </section>
-    <section class="card">
-      <div class="label">ANALIZA E TREGUT</div>
-      <div class="row">
-        <span>Instrumenti</span>
-        <span class="value gold">XAUUSD</span>
-      </div>
-      <div class="row">
-        <span>Timeframe i trendit</span>
-        <span class="value">M15</span>
-      </div>
-      <div class="row">
-        <span>Timeframe i hyrjes</span>
-        <span class="value">M5</span>
-      </div>
-      <div class="row">
-        <span>Trendi</span>
-        <span class="value" id="trend">Pa analizë</span>
-      </div>
-      <div class="row">
-        <span>Sinjali</span>
-        <span class="value" id="signal">Asnjë</span>
-      </div>
-      <div class="small">
-        Analiza teknike M15/M5 nuk është aktivizuar ende.
-        Këto fusha nuk gjenerojnë sinjale reale.
-      </div>
-    </section>
-    <section class="card">
-      <div class="label">MENAXHIMI I RREZIKUT</div>
-      <label for="risk">Rreziku i synuar për tregti (%)</label>
-      <input id="risk" type="number" min="0.1" max="1" step="0.1" value="0.5">
-      <div class="row">
-        <span>Modaliteti</span>
-        <span class="value green">DEMO / SIMULIM</span>
-      </div>
-      <div class="row">
-        <span>Lidhja me MT5</span>
-        <span class="value red">Nuk është lidhur</span>
-      </div>
-      <div class="buttons">
-        <button id="start" type="button">START</button>
-        <button id="stop" type="button">STOP</button>
-      </div>
-      <div id="bot-status" class="small" aria-live="polite">
-        Simulimi është ndalur.
-      </div>
-    </section>
-    <section class="notice">
-      <strong>E rëndësishme:</strong>
-      Çmimi përditësohet nga një API e jashtme.
-      START dhe STOP kontrollojnë vetëm statusin e simulimit.
-      Ky dashboard nuk është i lidhur me MT5 dhe nuk hap tregti.
-      Rreziku 0.5% është vetëm një vlerë e synuar, jo llogaritje
-      automatike e madhësisë së pozicionit.
-    </section>
-    <footer class="footer">
-      ELITE GOLD AI · VERSION DEMO
-    </footer>
-  </main>
-  <script>
-    const API_URL =
-      "https://elite-gold-backend.7j5rsrzjrz.workers.dev/api/price";
-    const priceElement = document.getElementById("gold-price");
-    const priceStatus = document.getElementById("price-status");
-    const botStatus = document.getElementById("bot-status");
-    let simulationRunning = false;
-    let lastKnownPrice = null;
-    async function updateGoldPrice() {
-      try {
-        const response = await fetch(API_URL, {
-          cache: "no-store"
-        });
-        if (!response.ok) {
-          throw new Error("Serveri nuk u përgjigj");
-        }
-        const data = await response.json();
-        const price = Number(data.price);
-        if (data.symbol !== "XAUUSD" ||
-            !Number.isFinite(price) ||
-            price <= 0) {
-          throw new Error("Të dhënat nuk janë të vlefshme");
-        }
-        lastKnownPrice = price;
-        priceElement.textContent =
-          "$" + price.toLocaleString("en-US", {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-          });
-        let updatedText = "Ora e përditësimit nuk është dhënë";
-        if (data.updatedAt) {
-          updatedText =
-            new Date(data.updatedAt).toLocaleString();
-        }
-        priceStatus.textContent =
-          "API online · Përditësuar: " + updatedText;
-      } catch (error) {
-        priceStatus.textContent =
-          lastKnownPrice === null
-            ? "Çmimi nuk është i disponueshëm. Provo përsëri."
-            : "Lidhja dështoi. Shfaqet çmimi i fundit i marrë.";
-        if (lastKnownPrice === null) {
-          priceElement.textContent = "--";
-        }
-      }
+<main>
+<header>
+<h1>ELITE GOLD AI</h1>
+<div class="sub">PERSONAL GOLD DASHBOARD</div>
+</header>
+
+<section class="card">
+<div class="label">XAUUSD · Gold Spot Price</div>
+<div class="price" id="price">Duke u lidhur...</div>
+<div class="small" id="priceStatus">Po kontrollohet burimi i çmimit...</div>
+</section>
+
+<section class="card">
+<div class="label">Analiza automatike e tregut</div>
+<div class="grid" style="margin-top:13px">
+<div class="box"><div class="label">Trendi M15</div><div class="value" id="trend">Duke analizuar...</div></div>
+<div class="box"><div class="label">Konfirmimi M5</div><div class="value" id="confirm">Duke analizuar...</div></div>
+</div>
+<div class="signal neutral" id="signal">DUKE ANALIZUAR</div>
+<div class="small" id="reason">Po merren të dhënat e qirinjve të Gold.</div>
+</section>
+
+<section class="card">
+<div class="label">Nivelet e sinjalit · XAUUSD</div>
+<div class="grid" style="margin-top:13px">
+<div class="box"><div class="label">Entry (hyrja)</div><div class="value" id="entry">—</div></div>
+<div class="box"><div class="label">Stop Loss</div><div class="value" id="sl">—</div></div>
+<div class="box"><div class="label">Take Profit</div><div class="value" id="tp">—</div></div>
+<div class="box"><div class="label">RSI M5</div><div class="value" id="rsi">—</div></div>
+</div>
+<p class="small" id="updated">Sinjali nuk është ende i konfirmuar.</p>
+</section>
+
+<section class="card">
+<div class="label">Menaxhimi i rrezikut</div>
+<label class="small" for="risk">Rreziku i synuar për tregti (%)</label>
+<input id="risk" type="number" min="0.1" max="1" step="0.1" value="0.5">
+<p class="small">Ky cilësim është informues. Dashboard-i nuk e llogarit lotin sipas bilancit dhe nuk vendos urdhra në broker.</p>
+<div class="grid">
+<div class="box"><div class="label">Modaliteti</div><div class="value neutral">DEMO / SINJALE</div></div>
+<div class="box"><div class="label">Lidhja me MT5</div><div class="value" id="mt5">Nuk është lidhur</div></div>
+</div>
+</section>
+
+<section class="card">
+<div class="label">Gjendja e sistemit</div>
+<div class="value" id="status">Po niset analiza...</div>
+<p class="small">Kontroll i ri çdo 30 sekonda. Përdoren qirinjtë e mbyllur. Sinjalet nuk garantojnë fitim dhe fillimisht duhen testuar në demo.</p>
+<div class="notice">Ky dashboard nuk është Expert Advisor dhe nuk hap tregti. Çmimet e burimeve publike mund të ndryshojnë nga bid/ask dhe spread-i i TIOmarkets.</div>
+</section>
+<footer>ELITE GOLD AI · XAUUSD · M15 + M5</footer>
+</main>
+
+<script>
+const API_PRICE="https://elite-gold-backend.7j5rsrzjrz.workers.dev/api/price";
+const API_CANDLES="https://biquote.io/api/XAUUSD/ohlc?interval=TIME&limit=300";
+
+const $=id=>document.getElementById(id);
+const fmt=n=>Number.isFinite(n)?n.toFixed(2):"—";
+
+async function getCandles(tf){
+  const response=await fetch(API_CANDLES.replace("TIME",tf),{cache:"no-store"});
+  if(!response.ok) throw new Error("Burimi i qirinjve nuk u përgjigj ("+tf+")");
+  const data=await response.json();
+  if(!Array.isArray(data.bars)) throw new Error("Të dhënat OHLC nuk kanë formatin e pritur.");
+  return data.bars.filter(b=>!b.isOpen)
+    .filter(b=>[b.open,b.high,b.low,b.close].every(v=>Number.isFinite(Number(v))))
+    .reverse()
+    .map(b=>({time:b.openTime,open:+b.open,high:+b.high,low:+b.low,close:+b.close}));
+}
+
+function ema(values,period){
+  if(values.length<period) return NaN;
+  const k=2/(period+1);
+  let e=values.slice(0,period).reduce((a,b)=>a+b,0)/period;
+  for(let i=period;i<values.length;i++) e=values[i]*k+e*(1-k);
+  return e;
+}
+
+function rsi(values,period=14){
+  if(values.length<=period) return NaN;
+  let gains=0,losses=0;
+  for(let i=1;i<=period;i++){
+    const d=values[i]-values[i-1];
+    if(d>0) gains+=d; else losses-=d;
+  }
+  let avgGain=gains/period,avgLoss=losses/period;
+  for(let i=period+1;i<values.length;i++){
+    const d=values[i]-values[i-1];
+    avgGain=(avgGain*(period-1)+Math.max(0,d))/period;
+    avgLoss=(avgLoss*(period-1)+Math.max(0,-d))/period;
+  }
+  if(avgLoss===0) return 100;
+  return 100-(100/(1+avgGain/avgLoss));
+}
+
+function atr(bars,period=14){
+  if(bars.length<period+1) return NaN;
+  const trs=[];
+  for(let i=1;i<bars.length;i++){
+    const b=bars[i],prev=bars[i-1];
+    trs.push(Math.max(b.high-b.low,Math.abs(b.high-prev.close),Math.abs(b.low-prev.close)));
+  }
+  return trs.slice(-period).reduce((a,b)=>a+b,0)/period;
+}
+
+function analyze(bars,tf){
+  const closes=bars.map(b=>b.close);
+  if(bars.length<210) throw new Error("Nuk ka mjaft qirinj të mbyllur për analizën "+tf+".");
+  return {bars,closes,last:closes[closes.length-1],ema20:ema(closes,20),ema50:ema(closes,50),
+    ema200:ema(closes,200),rsi:rsi(closes),atr:atr(bars)};
+}
+
+async function updatePrice(){
+  try{
+    const r=await fetch(API_PRICE,{cache:"no-store"});
+    if(!r.ok) throw new Error();
+    const d=await r.json();
+    if(!Number.isFinite(Number(d.price))) throw new Error();
+    $("price").textContent="$"+Number(d.price).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
+    $("priceStatus").textContent="API online · Përditësuar: "+new Date().toLocaleTimeString("sq-AL")+" · "+(d.source||"Spot");
+  }catch(e){
+    $("priceStatus").textContent="Çmimi spot përkohësisht i padisponueshëm.";
+  }
+}
+
+async function analyzeMarket(){
+  $("status").textContent="Po merren qirinjtë M15/M5...";
+  try{
+    const [raw15,raw5]=await Promise.all([getCandles("15m"),getCandles("5m")]);
+    const m15=analyze(raw15,"M15"),m5=analyze(raw5,"M5");
+    const up=m15.ema50>m15.ema200&&m15.last>m15.ema50;
+    const down=m15.ema50<m15.ema200&&m15.last<m15.ema50;
+
+    $("trend").textContent=up?"NË RRITJE":down?"NË RËNIE":"ANËSOR / I PËRZIER";
+    $("trend").className="value "+(up?"buy":down?"sell":"neutral");
+
+    const buyConfirm=m5.ema20>m5.ema50&&m5.last>m5.ema20&&m5.rsi>=50&&m5.rsi<=68;
+    const sellConfirm=m5.ema20<m5.ema50&&m5.last<m5.ema20&&m5.rsi>=32&&m5.rsi<=50;
+    $("confirm").textContent=buyConfirm?"BUY konfirmuar":sellConfirm?"SELL konfirmuar":"Pa konfirmim";
+    $("confirm").className="value "+(buyConfirm?"buy":sellConfirm?"sell":"neutral");
+    $("rsi").textContent=fmt(m5.rsi);
+    const signal=up&&buyConfirm?"BUY":down&&sellConfirm?"SELL":"PA SINJAL";
+    const sigEl=$("signal");
+    sigEl.textContent=signal;
+    sigEl.className="signal "+(signal==="BUY"?"buy":signal==="SELL"?"sell":"neutral");
+
+    if(signal==="PA SINJAL"){
+      $("entry").textContent=$("sl").textContent=$("tp").textContent="—";
+      $("reason").textContent="Trendi M15 dhe konfirmimi M5 nuk janë të dy në të njëjtin drejtim. Nuk ka hyrje sipas rregullave.";
+    }else{
+      const entry=m5.last;
+      const distance=Math.max(m5.atr*1.5,0.01);
+      const sl=signal==="BUY"?entry-distance:entry+distance;
+      const tp=signal==="BUY"?entry+distance*2:entry-distance*2;
+      $("entry").textContent=fmt(entry);
+      $("sl").textContent=fmt(sl);
+      $("tp").textContent=fmt(tp);
+      $("reason").textContent=signal==="BUY"
+        ?"Trend M15 në rritje dhe kushtet M5 për BUY janë përputhur."
+        :"Trend M15 në rënie dhe kushtet M5 për SELL janë përputhur.";
     }
-    document.getElementById("start").addEventListener("click", () => {
-      simulationRunning = true;
-      botStatus.textContent =
-        "Simulimi është aktiv. Nuk po hapen tregti reale.";
-    });
-    document.getElementById("stop").addEventListener("click", () => {
-      simulationRunning = false;
-      botStatus.textContent =
-        "Simulimi është ndalur. MT5 nuk është lidhur.";
-    });
-    updateGoldPrice();
-    setInterval(updateGoldPrice, 30000);
-  </script>
+    $("updated").textContent="Analiza e fundit: "+new Date().toLocaleTimeString("sq-AL")+" · Qirinjtë e hapur janë përjashtuar.";
+    $("status").textContent="Analiza u përditësua. Tregtimi automatik është i çaktivizuar.";
+  }catch(e){
+    $("signal").textContent="TË DHËNA TË PADISPONUESHME";
+    $("signal").className="signal neutral";
+    $("reason").textContent=e.message||"Nuk mund të analizohet tregu.";
+    $("status").textContent="Gabim gjatë analizës. Do të provohet përsëri automatikisht.";
+  }
+}
+
+async function refresh(){
+  await Promise.all([updatePrice(),analyzeMarket()]);
+}
+refresh();
+setInterval(refresh,30000);
+</script>
 </body>
 </html>
