@@ -44,10 +44,14 @@ footer{text-align:center;color:var(--muted);font-size:11px;padding:22px}
 </section>
 
 <section class="card">
-<div class="label">Analiza automatike e tregut</div>
+<div class="label">Analiza e tregut · Price Action</div>
+<button class="goldbtn" id="signalBtn" type="button" style="width:100%;margin-top:12px">📊 MERR SINJALIN</button>
+<p class="small">Shtype butonin kur dëshiron analizë të re. Kontrollohen M15 dhe M30, përfshirë Price Action.</p>
 <div class="grid" style="margin-top:13px">
-<div class="box"><div class="label">Trendi M15</div><div class="value" id="trend">Duke analizuar...</div></div>
-<div class="box"><div class="label">Konfirmimi M5</div><div class="value" id="confirm">Duke analizuar...</div></div>
+<div class="box"><div class="label">Trendi M15</div><div class="value" id="trend">Në pritje</div></div>
+<div class="box"><div class="label">Trendi M30</div><div class="value" id="confirm">Në pritje</div></div>
+<div class="box"><div class="label">Price Action M15</div><div class="value" id="pa15">Në pritje</div></div>
+<div class="box"><div class="label">Price Action M30</div><div class="value" id="pa30">Në pritje</div></div>
 </div>
 <div class="signal neutral" id="signal">DUKE ANALIZUAR</div>
 <div class="small" id="reason">Po merren të dhënat e qirinjve të Gold.</div>
@@ -59,7 +63,7 @@ footer{text-align:center;color:var(--muted);font-size:11px;padding:22px}
 <div class="box"><div class="label">Entry (hyrja)</div><div class="value" id="entry">—</div></div>
 <div class="box"><div class="label">Stop Loss</div><div class="value" id="sl">—</div></div>
 <div class="box"><div class="label">Take Profit</div><div class="value" id="tp">—</div></div>
-<div class="box"><div class="label">RSI M5</div><div class="value" id="rsi">—</div></div>
+<div class="box"><div class="label">RSI M15</div><div class="value" id="rsi">—</div></div>
 </div>
 <p class="small" id="updated">Sinjali nuk është ende i konfirmuar.</p>
 </section>
@@ -78,10 +82,10 @@ footer{text-align:center;color:var(--muted);font-size:11px;padding:22px}
 <section class="card">
 <div class="label">Gjendja e sistemit</div>
 <div class="value" id="status">Po niset analiza...</div>
-<p class="small">Kontroll i ri çdo 30 sekonda. Përdoren qirinjtë e mbyllur. Sinjalet nuk garantojnë fitim dhe fillimisht duhen testuar në demo.</p>
+<p class="small">Sinjali rifreskohet kur shtyp butonin dhe automatikisht çdo 60 sekonda. Përdoren qirinjtë e mbyllur. Sinjalet nuk garantojnë fitim dhe fillimisht duhen testuar në demo.</p>
 <div class="notice">Ky dashboard nuk është Expert Advisor dhe nuk hap tregti. Çmimet e burimeve publike mund të ndryshojnë nga bid/ask dhe spread-i i TIOmarkets.</div>
 </section>
-<footer>ELITE GOLD AI · XAUUSD · M15 + M5</footer>
+<footer>ELITE GOLD AI · XAUUSD · M15 + M30 · PRICE ACTION</footer>
 </main>
 
 <script>
@@ -139,9 +143,9 @@ function atr(bars,period=14){
 
 function analyze(bars,tf){
   const closes=bars.map(b=>b.close);
-  if(bars.length<85) throw new Error("Ka vetëm "+bars.length+" qirinj të mbyllur për "+tf+"; duhen të paktën 85.");
-  return {bars,closes,last:closes[closes.length-1],ema20:ema(closes,20),ema50:ema(closes,50),
-    ema80:ema(closes,80),rsi:rsi(closes),atr:atr(bars)};
+  if(bars.length<30) throw new Error("API dërgoi vetëm "+bars.length+" qirinj të mbyllur për "+tf+"; duhen të paktën 30.");
+  return {bars,closes,last:closes[closes.length-1],ema20:ema(closes,20),ema50:ema(closes,Math.min(50,closes.length)),
+    ema80:ema(closes,Math.min(80,closes.length)),rsi:rsi(closes),atr:atr(bars)};
 }
 
 async function updatePrice(){
@@ -157,57 +161,70 @@ async function updatePrice(){
   }
 }
 
+function priceAction(a){
+  const b=a.bars, c=b[b.length-1], p=b[b.length-2];
+  if(!c||!p) return {bias:"PA E PAQARTË",dir:"none"};
+  const body=Math.abs(c.close-c.open), range=Math.max(c.high-c.low,0.00001);
+  const lower=Math.min(c.open,c.close)-c.low, upper=c.high-Math.max(c.open,c.close);
+  const bullEngulf=c.close>c.open && p.close<p.open && c.close>=p.open && c.open<=p.close;
+  const bearEngulf=c.close<c.open && p.close>p.open && c.close<=p.open && c.open>=p.close;
+  const bullPin=lower/range>0.55 && body/range<0.4 && c.close>c.open;
+  const bearPin=upper/range>0.55 && body/range<0.4 && c.close<c.open;
+  const prior=b.slice(Math.max(0,b.length-6),b.length-1);
+  const breakoutUp=prior.length>=3 && c.close>Math.max(...prior.map(x=>x.high));
+  const breakoutDown=prior.length>=3 && c.close<Math.min(...prior.map(x=>x.low));
+  if(bullEngulf||bullPin||breakoutUp) return {bias:bullEngulf?"Bullish engulfing":bullPin?"Bullish pin bar":"Breakout lart",dir:"buy"};
+  if(bearEngulf||bearPin||breakoutDown) return {bias:bearEngulf?"Bearish engulfing":bearPin?"Bearish pin bar":"Breakout poshtë",dir:"sell"};
+  return {bias:"Pa model të qartë",dir:"none"};
+}
+
 async function analyzeMarket(){
-  $("status").textContent="Po merren qirinjtë M15/M5...";
+  const btn=$("signalBtn"); if(btn) btn.disabled=true;
+  $("status").textContent="Po kontrollohen qirinjtë M15/M30 dhe Price Action...";
   try{
-    const [raw15,raw5]=await Promise.all([getCandles("15m"),getCandles("5m")]);
-    const m15=analyze(raw15,"M15"),m5=analyze(raw5,"M5");
-    const up=m15.ema50>m15.ema80&&m15.last>m15.ema50;
-    const down=m15.ema50<m15.ema80&&m15.last<m15.ema50;
-
-    $("trend").textContent=up?"NË RRITJE":down?"NË RËNIE":"ANËSOR / I PËRZIER";
-    $("trend").className="value "+(up?"buy":down?"sell":"neutral");
-
-    const buyConfirm=m5.ema20>m5.ema50&&m5.last>m5.ema20&&m5.rsi>=50&&m5.rsi<=68;
-    const sellConfirm=m5.ema20<m5.ema50&&m5.last<m5.ema20&&m5.rsi>=32&&m5.rsi<=50;
-    $("confirm").textContent=buyConfirm?"BUY konfirmuar":sellConfirm?"SELL konfirmuar":"Pa konfirmim";
-    $("confirm").className="value "+(buyConfirm?"buy":sellConfirm?"sell":"neutral");
-    $("rsi").textContent=fmt(m5.rsi);
-    const signal=up&&buyConfirm?"BUY":down&&sellConfirm?"SELL":"PA SINJAL";
-    const sigEl=$("signal");
-    sigEl.textContent=signal;
-    sigEl.className="signal "+(signal==="BUY"?"buy":signal==="SELL"?"sell":"neutral");
-
-    if(signal==="PA SINJAL"){
-      $("entry").textContent=$("sl").textContent=$("tp").textContent="—";
-      $("reason").textContent="Trendi M15 dhe konfirmimi M5 nuk janë të dy në të njëjtin drejtim. Nuk ka hyrje sipas rregullave.";
-    }else{
-      const entry=m5.last;
-      const distance=Math.max(m5.atr*1.5,0.01);
-      const sl=signal==="BUY"?entry-distance:entry+distance;
-      const tp=signal==="BUY"?entry+distance*2:entry-distance*2;
-      $("entry").textContent=fmt(entry);
-      $("sl").textContent=fmt(sl);
-      $("tp").textContent=fmt(tp);
-      $("reason").textContent=signal==="BUY"
-        ?"Trend M15 në rritje dhe kushtet M5 për BUY janë përputhur."
-        :"Trend M15 në rënie dhe kushtet M5 për SELL janë përputhur.";
+    const [raw15,raw30]=await Promise.all([getCandles("15m"),getCandles("30m")]);
+    const m15=analyze(raw15,"M15"),m30=analyze(raw30,"M30");
+    const pa15=priceAction(m15),pa30=priceAction(m30);
+    const up15=m15.last>m15.ema50 && m15.ema20>m15.ema50;
+    const down15=m15.last<m15.ema50 && m15.ema20<m15.ema50;
+    const up30=m30.last>m30.ema50 && m30.ema20>m30.ema50;
+    const down30=m30.last<m30.ema50 && m30.ema20<m30.ema50;
+    $("trend").textContent=up15?"NË RRITJE":down15?"NË RËNIE":"ANËSOR / I PËRZIER";
+    $("trend").className="value "+(up15?"buy":down15?"sell":"neutral");
+    $("confirm").textContent=up30?"NË RRITJE":down30?"NË RËNIE":"ANËSOR / I PËRZIER";
+    $("confirm").className="value "+(up30?"buy":down30?"sell":"neutral");
+    $("pa15").textContent=pa15.bias; $("pa30").textContent=pa30.bias;
+    $("pa15").className="value "+(pa15.dir==="buy"?"buy":pa15.dir==="sell"?"sell":"neutral");
+    $("pa30").className="value "+(pa30.dir==="buy"?"buy":pa30.dir==="sell"?"sell":"neutral");
+    $("rsi").textContent=fmt(m15.rsi);
+    let signal="PA SINJAL",why="M15 dhe M30 nuk janë në përputhje të mjaftueshme. Prit konfigurim më të qartë.";
+    if(up15&&up30&&(pa15.dir==="buy"||pa30.dir==="buy")){signal="BUY";why="M15 dhe M30 janë bullish dhe Price Action jep shenjë në rritje.";}
+    else if(down15&&down30&&(pa15.dir==="sell"||pa30.dir==="sell")){signal="SELL";why="M15 dhe M30 janë bearish dhe Price Action jep shenjë në rënie.";}
+    const sigEl=$("signal"); sigEl.textContent=signal; sigEl.className="signal "+(signal==="BUY"?"buy":signal==="SELL"?"sell":"neutral");
+    if(signal==="PA SINJAL"){$("entry").textContent=$("sl").textContent=$("tp").textContent="—";}
+    else{
+      const entry=m15.last, distance=Math.max(m15.atr*1.5,0.01);
+      $("entry").textContent=fmt(entry); $("sl").textContent=fmt(signal==="BUY"?entry-distance:entry+distance);
+      $("tp").textContent=fmt(signal==="BUY"?entry+distance*2:entry-distance*2);
     }
-    $("updated").textContent="Analiza e fundit: "+new Date().toLocaleTimeString("sq-AL")+" · Qirinjtë e hapur janë përjashtuar.";
-    $("status").textContent="Analiza u përditësua. Tregtimi automatik është i çaktivizuar.";
+    $("reason").textContent=why;
+    $("updated").textContent="Analiza e fundit: "+new Date().toLocaleTimeString("sq-AL")+" · M15/M30 · Price Action";
+    $("status").textContent="Analiza përfundoi. Sinjalet janë indikative, jo garanci fitimi.";
   }catch(e){
-    $("signal").textContent="TË DHËNA TË PADISPONUESHME";
-    $("signal").className="signal neutral";
+    $("signal").textContent="TË DHËNA TË PADISPONUESHME"; $("signal").className="signal neutral";
     $("reason").textContent=e.message||"Nuk mund të analizohet tregu.";
-    $("status").textContent="Gabim gjatë analizës. Do të provohet përsëri automatikisht.";
-  }
+    $("status").textContent="Gabim me API/qirinjtë. Provo përsëri pas pak.";
+  }finally{if(btn) btn.disabled=false;}
 }
 
 async function refresh(){
   await Promise.all([updatePrice(),analyzeMarket()]);
 }
-refresh();
-setInterval(refresh,30000);
+updatePrice();
+$("signalBtn").addEventListener("click",analyzeMarket);
+setInterval(updatePrice,30000);
+setInterval(analyzeMarket,60000);
+analyzeMarket();
 </script>
 </body>
 </html>
