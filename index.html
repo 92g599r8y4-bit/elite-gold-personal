@@ -44,6 +44,15 @@ footer{text-align:center;color:var(--muted);font-size:11px;padding:22px}
 </section>
 
 <section class="card">
+<div class="label">CHART LIVE · XAUUSD</div>
+<p class="small">Chart live nga TradingView. Ndrysho timeframe në 15m ose 30m për ta krahasuar me analizën.</p>
+<div style="height:430px;overflow:hidden;border-radius:12px;background:#0b1220">
+<iframe title="TradingView XAUUSD live chart" src="https://www.tradingview.com/widgetembed/?frameElementId=tradingview_xauusd&symbol=OANDA%3AXAUUSD&interval=15&hidesidetoolbar=0&symboledit=1&saveimage=1&toolbarbg=0b1220&studies=%5B%5D&theme=dark&style=1&timezone=Etc%2FUTC&withdateranges=1&hideideas=1&studies_overrides=%7B%7D&overrides=%7B%7D" style="width:100%;height:100%;border:0" loading="lazy" allowfullscreen></iframe>
+</div>
+<p class="small"><a href="https://www.tradingview.com/chart/?symbol=OANDA%3AXAUUSD" target="_blank" rel="noopener" style="color:#f6c453">Hape chartin në TradingView në ekran të plotë ↗</a></p>
+</section>
+
+<section class="card">
 <div class="label">Analiza e tregut · Price Action</div>
 <button class="goldbtn" id="signalBtn" type="button" style="width:100%;margin-top:12px">📊 MERR SINJALIN</button>
 <p class="small">Shtype butonin kur dëshiron analizë të re. Kontrollohen M15 dhe M30, përfshirë Price Action.</p>
@@ -64,6 +73,7 @@ footer{text-align:center;color:var(--muted);font-size:11px;padding:22px}
 <div class="box"><div class="label">Stop Loss</div><div class="value" id="sl">—</div></div>
 <div class="box"><div class="label">Take Profit</div><div class="value" id="tp">—</div></div>
 <div class="box"><div class="label">RSI M15</div><div class="value" id="rsi">—</div></div>
+<div class="box"><div class="label">Konfluenca</div><div class="value" id="score">—</div></div>
 </div>
 <p class="small" id="updated">Sinjali nuk është ende i konfirmuar.</p>
 </section>
@@ -85,7 +95,7 @@ footer{text-align:center;color:var(--muted);font-size:11px;padding:22px}
 <p class="small">Sinjali rifreskohet kur shtyp butonin dhe automatikisht çdo 60 sekonda. Përdoren qirinjtë e mbyllur. Sinjalet nuk garantojnë fitim dhe fillimisht duhen testuar në demo.</p>
 <div class="notice">Ky dashboard nuk është Expert Advisor dhe nuk hap tregti. Çmimet e burimeve publike mund të ndryshojnë nga bid/ask dhe spread-i i TIOmarkets.</div>
 </section>
-<footer>ELITE GOLD AI · XAUUSD · M15 + M30 · PRICE ACTION</footer>
+<footer>ELITE GOLD AI · XAUUSD · M15 + M30 · PRICE ACTION · TRADINGVIEW</footer>
 </main>
 
 <script>
@@ -197,13 +207,19 @@ async function analyzeMarket(){
     $("pa15").className="value "+(pa15.dir==="buy"?"buy":pa15.dir==="sell"?"sell":"neutral");
     $("pa30").className="value "+(pa30.dir==="buy"?"buy":pa30.dir==="sell"?"sell":"neutral");
     $("rsi").textContent=fmt(m15.rsi);
-    let signal="PA SINJAL",why="M15 dhe M30 nuk janë në përputhje të mjaftueshme. Prit konfigurim më të qartë.";
-    if(up15&&up30&&(pa15.dir==="buy"||pa30.dir==="buy")){signal="BUY";why="M15 dhe M30 janë bullish dhe Price Action jep shenjë në rritje.";}
-    else if(down15&&down30&&(pa15.dir==="sell"||pa30.dir==="sell")){signal="SELL";why="M15 dhe M30 janë bearish dhe Price Action jep shenjë në rënie.";}
+    // Confluence scoring: M30 direction is the bias; M15 trend, Price Action and RSI are confirmations.
+    let signal="PA SINJAL",why="Nuk ka ende konfluencë të mjaftueshme. Prit mbylljen e qiririt dhe provo përsëri.";
+    const buyScore=(up30?1:0)+(up15?1:0)+(pa15.dir==="buy"?1:0)+(pa30.dir==="buy"?1:0)+((m15.rsi>=45&&m15.rsi<=68)?1:0);
+    const sellScore=(down30?1:0)+(down15?1:0)+(pa15.dir==="sell"?1:0)+(pa30.dir==="sell"?1:0)+((m15.rsi>=32&&m15.rsi<=55)?1:0);
+    // Require the M30 bias plus at least two supporting confirmations. Avoid entries against M30.
+    if(up30&&buyScore>=3){signal="BUY";why="M30 bullish me të paktën dy konfirmime shtesë nga M15, Price Action ose RSI. Kontrollo chartin dhe spread-in para çdo tregtie.";}
+    else if(down30&&sellScore>=3){signal="SELL";why="M30 bearish me të paktën dy konfirmime shtesë nga M15, Price Action ose RSI. Kontrollo chartin dhe spread-in para çdo tregtie.";}
+    $("score").textContent=(signal==="BUY"?buyScore:signal==="SELL"?sellScore:Math.max(buyScore,sellScore))+" / 5";
     const sigEl=$("signal"); sigEl.textContent=signal; sigEl.className="signal "+(signal==="BUY"?"buy":signal==="SELL"?"sell":"neutral");
     if(signal==="PA SINJAL"){$("entry").textContent=$("sl").textContent=$("tp").textContent="—";}
     else{
-      const entry=m15.last, distance=Math.max(m15.atr*1.5,0.01);
+      const entry=m15.last, volatility=Number.isFinite(m15.atr)?m15.atr:Math.abs(m15.last-m15.bars[m15.bars.length-2].close);
+      const distance=Math.max(volatility*1.5,0.01);
       $("entry").textContent=fmt(entry); $("sl").textContent=fmt(signal==="BUY"?entry-distance:entry+distance);
       $("tp").textContent=fmt(signal==="BUY"?entry+distance*2:entry-distance*2);
     }
