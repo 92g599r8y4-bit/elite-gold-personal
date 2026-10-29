@@ -1,361 +1,49 @@
 <!DOCTYPE html>
-<html lang="sq">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ELITE GOLD AI PRO</title>
+<html lang="sq"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ELITE GOLD AI PRO · SNIPER MAX</title>
 <style>
-:root{color-scheme:dark;--bg:#080d17;--card:#111a2b;--line:#26344c;--gold:#f6c453;--text:#edf2fa;--muted:#9eacc2;--green:#20d49a;--red:#ff6678}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,Arial,sans-serif;padding:18px}
-main{max-width:760px;margin:auto}
-header{text-align:center;padding:22px 8px}
-h1{color:var(--gold);font-size:29px;margin:0 0 8px;letter-spacing:1px}
-.sub{color:var(--muted);font-size:12px;letter-spacing:2px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin:13px 0}
-.label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
-.price{font-size:34px;color:var(--gold);font-weight:800;margin:10px 0}
-.small{font-size:12px;color:var(--muted);line-height:1.6}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.box{background:#0b1220;border:1px solid var(--line);border-radius:11px;padding:13px;min-width:0}
-.value{font-weight:700;margin-top:8px;overflow-wrap:anywhere}
-.signal{text-align:center;font-size:27px;font-weight:900;padding:18px;border-radius:12px;background:#0b1220;margin:14px 0;color:var(--muted)}
-.buy{color:var(--green)!important}
-.sell{color:var(--red)!important}
-.neutral{color:var(--gold)!important}
-button{border:0;border-radius:10px;padding:12px 17px;font-weight:800;cursor:pointer}
-button:disabled{opacity:.5}
-.goldbtn{background:var(--gold);color:#111827}
-input{width:100%;padding:12px;background:#0b1220;border:1px solid var(--line);border-radius:9px;color:white;margin-top:8px;font-size:16px}
-.notice{border-left:3px solid var(--gold);padding:10px 12px;background:#0b1220;color:var(--muted);font-size:12px;line-height:1.6}
-footer{text-align:center;color:var(--muted);font-size:11px;padding:22px}
-a{color:var(--gold)}
-@media(max-width:420px){body{padding:11px}.price{font-size:29px}.card{padding:14px}}
-</style>
-</head>
-<body>
-<main>
-<header>
-<h1>ELITE GOLD AI PRO</h1>
-<div class="sub">MULTI-TIMEFRAME GOLD ANALYSIS</div>
-</header>
-
-<section class="card">
-<div class="label">XAUUSD · Gold Spot Price</div>
-<div class="price" id="price">Duke u lidhur...</div>
-<div class="small" id="priceStatus">Po kontrollohet burimi i çmimit...</div>
-</section>
-
-<section class="card">
-<div class="label">CHART LIVE · XAUUSD</div>
-<p class="small">Chart live nga TradingView. Përdore për ta krahasuar analizën me çmimin aktual.</p>
-<div style="height:430px;overflow:hidden;border-radius:12px;background:#0b1220">
-<iframe title="TradingView XAUUSD live chart" src="https://www.tradingview.com/widgetembed/?frameElementId=tradingview_xauusd&symbol=OANDA%3AXAUUSD&interval=15&hidesidetoolbar=0&symboledit=1&saveimage=1&toolbarbg=0b1220&theme=dark&style=1&timezone=Etc%2FUTC&withdateranges=1&hideideas=1" style="width:100%;height:100%;border:0" loading="lazy" allowfullscreen></iframe>
-</div>
-<p class="small"><a href="https://www.tradingview.com/chart/?symbol=OANDA%3AXAUUSD" target="_blank" rel="noopener">Hape chartin në TradingView ↗</a></p>
-</section>
-
-<section class="card">
-<div class="label">1 · Drejtimi kryesor · D1 / H4</div>
-<div class="grid" style="margin-top:13px">
-<div class="box"><div class="label">D1 Trend</div><div class="value" id="trendD1">Në pritje</div></div>
-<div class="box"><div class="label">H4 Trend</div><div class="value" id="trendH4">Në pritje</div></div>
-</div>
-</section>
-
-<section class="card">
-<div class="label">2 · Konfirmimi dhe hyrja</div>
-<button class="goldbtn" id="signalBtn" type="button" style="width:100%;margin-top:12px">ANALIZO TREGUN</button>
-<p class="small">Sistemi kontrollon D1, H4, H1 dhe M15. Kur drejtimet nuk përputhen ose të dhënat mungojnë, duhet të presë.</p>
-<div class="grid" style="margin-top:13px">
-<div class="box"><div class="label">H1 Confirmation</div><div class="value" id="trendH1">Në pritje</div></div>
-<div class="box"><div class="label">M15 Entry Setup</div><div class="value" id="trendM15">Në pritje</div></div>
-<div class="box"><div class="label">Price Action H1</div><div class="value" id="paH1">Në pritje</div></div>
-<div class="box"><div class="label">Price Action M15</div><div class="value" id="paM15">Në pritje</div></div>
-</div>
-<div class="signal neutral" id="signal">DUKE ANALIZUAR</div>
-<div class="small" id="reason">Po kontrollohen të dhënat...</div>
-</section>
-
-<section class="card">
-<div class="label">3 · Entry / Stop Loss / Take Profits</div>
-<div class="grid" style="margin-top:13px">
-<div class="box"><div class="label">Entry</div><div class="value" id="entry">—</div></div>
-<div class="box"><div class="label">Stop Loss</div><div class="value" id="sl">—</div></div>
-<div class="box"><div class="label">Take Profit 1</div><div class="value" id="tp1">—</div></div>
-<div class="box"><div class="label">Take Profit 2</div><div class="value" id="tp2">—</div></div>
-<div class="box"><div class="label">Take Profit 3</div><div class="value" id="tp3">—</div></div>
-<div class="box"><div class="label">RSI M15</div><div class="value" id="rsi">—</div></div>
-<div class="box"><div class="label">ATR M15</div><div class="value" id="atr">—</div></div>
-<div class="box"><div class="label">Konfirmimet</div><div class="value" id="score">—</div></div>
-</div>
-<p class="small" id="updated">Nivelet do të shfaqen pas analizës.</p>
-</section>
-
-<section class="card">
-<div class="label">4 · Struktura e tregut</div>
-<div class="grid" style="margin-top:13px">
-<div class="box"><div class="label">BOS / Strukturë</div><div class="value" id="bos">Në pritje</div></div>
-<div class="box"><div class="label">Liquidity Sweep</div><div class="value" id="sweep">Në pritje</div></div>
-<div class="box"><div class="label">FVG</div><div class="value" id="fvg">Në pritje</div></div>
-<div class="box"><div class="label">Market Regime</div><div class="value" id="regime">Në pritje</div></div>
-</div>
-<p class="small">Këto janë kontrolle të thjeshtuara të qirinjve, jo zbulim institucional i garantuar. Order Blocks dhe FVG duhet të verifikohen në chart.</p>
-</section>
-
-<section class="card">
-<div class="label">5 · Filtri i lajmeve</div>
-<div class="value neutral" id="newsStatus">KONTROLLO KALENDARIN</div>
-<p class="small">Ky version nuk ka ende burim të lidhur të lajmeve live. Kontrollo kalendarin ekonomik para hyrjes në treg.</p>
-<p class="small"><a href="https://www.tradingview.com/economic-calendar/" target="_blank" rel="noopener">Hap kalendarin ekonomik ↗</a></p>
-</section>
-
-<section class="card">
-<div class="label">6 · Menaxhimi i rrezikut</div>
-<label class="small" for="risk">Rreziku i synuar për tregti (%)</label>
-<input id="risk" type="number" min="0.1" max="1" step="0.1" value="0.5">
-<p class="small">Ky cilësim është informues. Dashboard-i nuk e llogarit lotin nga bilanci dhe nuk dërgon urdhra te brokeri.</p>
-<div class="grid">
-<div class="box"><div class="label">Modaliteti</div><div class="value neutral">SINJALE / DEMO</div></div>
-<div class="box"><div class="label">Lidhja MT5</div><div class="value">Nuk është lidhur</div></div>
-</div>
-</section>
-
-<section class="card">
-<div class="label">7 · Gjendja e sistemit</div>
-<div class="value" id="status">Po niset analiza...</div>
-<p class="small">Analiza rifreskohet automatikisht çdo 60 sekonda. Sinjalet janë orientuese dhe duhet të testohen në demo.</p>
-<div class="notice">Nëse API nuk jep të dhëna të vlefshme, sistemi duhet të tregojë WAIT. Kjo faqe nuk hap tregti automatikisht dhe nuk garanton fitim.</div>
-</section>
-
-<footer>ELITE GOLD AI PRO · D1 + H4 + H1 + M15</footer>
-</main>
-
+:root{color-scheme:dark;--bg:#080d17;--card:#111a2b;--line:#26344c;--gold:#f6c453;--text:#edf2fa;--muted:#9eacc2;--green:#20d49a;--red:#ff6678}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,Arial,sans-serif;padding:18px}main{max-width:760px;margin:auto}header{text-align:center;padding:22px 8px}h1{color:var(--gold);font-size:29px;margin:0 0 8px}.sub{color:var(--muted);font-size:12px;letter-spacing:2px}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin:13px 0}.label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}.price{font-size:34px;color:var(--gold);font-weight:800;margin:10px 0}.small{font-size:12px;color:var(--muted);line-height:1.6}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.box{background:#0b1220;border:1px solid var(--line);border-radius:11px;padding:13px;min-width:0}.value{font-weight:700;margin-top:8px;overflow-wrap:anywhere}.signal{text-align:center;font-size:27px;font-weight:900;padding:18px;border-radius:12px;background:#0b1220;margin:14px 0;color:var(--muted)}.buy{color:var(--green)!important}.sell{color:var(--red)!important}.neutral{color:var(--gold)!important}button{border:0;border-radius:10px;padding:12px 17px;font-weight:800;cursor:pointer}button:disabled{opacity:.5}.goldbtn{background:var(--gold);color:#111827}input{width:100%;padding:12px;background:#0b1220;border:1px solid var(--line);border-radius:9px;color:white;margin-top:8px;font-size:16px}.notice{border-left:3px solid var(--gold);padding:10px 12px;background:#0b1220;color:var(--muted);font-size:12px;line-height:1.6}footer{text-align:center;color:var(--muted);font-size:11px;padding:22px}a{color:var(--gold)}@media(max-width:420px){body{padding:11px}.price{font-size:29px}.card{padding:14px}}
+</style></head><body><main>
+<header><h1>ELITE GOLD AI PRO</h1><div class="sub">SNIPER MAX · MULTI-TIMEFRAME GOLD ANALYSIS</div></header>
+<section class="card"><div class="label">XAUUSD · Gold Spot Price</div><div class="price" id="price">Duke u lidhur...</div><div class="small" id="priceStatus">Po kontrollohet burimi i çmimit...</div></section>
+<section class="card"><div class="label">CHART LIVE · XAUUSD</div><p class="small">Chart live nga TradingView. Krahasoje analizën me çmimin aktual.</p><div style="height:430px;overflow:hidden;border-radius:12px;background:#0b1220"><iframe title="TradingView XAUUSD live chart" src="https://www.tradingview.com/widgetembed/?frameElementId=tradingview_xauusd&symbol=OANDA%3AXAUUSD&interval=15&hidesidetoolbar=0&symboledit=1&saveimage=1&toolbarbg=0b1220&theme=dark&style=1&timezone=Etc%2FUTC&withdateranges=1&hideideas=1" style="width:100%;height:100%;border:0" loading="lazy" allowfullscreen></iframe></div><p class="small"><a href="https://www.tradingview.com/chart/?symbol=OANDA%3AXAUUSD" target="_blank" rel="noopener">Hape chartin në TradingView ↗</a></p></section>
+<section class="card"><div class="label">1 · Drejtimi kryesor · D1 / H4</div><div class="grid"><div class="box"><div class="label">D1 Trend</div><div class="value" id="trendD1">Në pritje</div></div><div class="box"><div class="label">H4 Trend</div><div class="value" id="trendH4">Në pritje</div></div></div></section>
+<section class="card"><div class="label">2 · Konfirmimi dhe hyrja</div><button class="goldbtn" id="signalBtn" type="button" style="width:100%;margin-top:12px">ANALIZO TREGUN</button><p class="small">Filtra D1, H4, H1, M15, Price Action, CHoCH dhe Order Block. Kur mungojnë konfirmimet, sistemi pret.</p><div class="grid"><div class="box"><div class="label">H1 Confirmation</div><div class="value" id="trendH1">Në pritje</div></div><div class="box"><div class="label">M15 Entry Setup</div><div class="value" id="trendM15">Në pritje</div></div><div class="box"><div class="label">Price Action H1</div><div class="value" id="paH1">Në pritje</div></div><div class="box"><div class="label">Price Action M15</div><div class="value" id="paM15">Në pritje</div></div></div><div class="signal neutral" id="signal">DUKE ANALIZUAR</div><div class="small" id="reason">Po kontrollohen të dhënat...</div></section>
+<section class="card"><div class="label">3 · Entry / Stop Loss / Take Profits</div><div class="grid"><div class="box"><div class="label">Entry</div><div class="value" id="entry">—</div></div><div class="box"><div class="label">Stop Loss</div><div class="value" id="sl">—</div></div><div class="box"><div class="label">Take Profit 1</div><div class="value" id="tp1">—</div></div><div class="box"><div class="label">Take Profit 2</div><div class="value" id="tp2">—</div></div><div class="box"><div class="label">Take Profit 3</div><div class="value" id="tp3">—</div></div><div class="box"><div class="label">RSI M15</div><div class="value" id="rsi">—</div></div><div class="box"><div class="label">ATR M15</div><div class="value" id="atr">—</div></div><div class="box"><div class="label">Konfirmimet</div><div class="value" id="score">—</div></div></div><p class="small" id="updated">Nivelet shfaqen pas analizës.</p></section>
+<section class="card"><div class="label">4 · Struktura e tregut</div><div class="grid"><div class="box"><div class="label">BOS / Strukturë</div><div class="value" id="bos">Në pritje</div></div><div ="box"><div class="label">Liquidity Sweep</div><div class="value" id="sweep">Në pritje</div></div><div class="box"><div class="label">FVG</div><div class="value" id="fvg">Në pritje</div></div><div class="box"><div class="label">Market Regime</div><div class="value" id="regime">Në pritje</div></div><div class="box"><div class="label">CHoCH · M15</div><div class="value" id="choch">Në pritje</div></div><div class="box"><div class="label">Order Block · M15</div><div class="value" id="ob">Në pritje</div></div></div><p class="small">CHoCH, OB, BOS dhe FVG janë zbulime të thjeshtuara nga qirinjtë; verifikoji në chart.</p></section>
+<section class="card"><div class="label">5 · Filtri i lajmeve</div><div class="value neutral">KONTROLLO KALENDARIN</div><p class="small">Nuk ka burim të lidhur të lajmeve live. Kontrollo kalendarin ekonomik para hyrjes.</p><p class="small"><a href="https://www.tradingview.com/economic-calendar/" target="_blank" rel="noopener">Hap kalendarin ekonomik ↗</a></p></section>
+<section class="card"><div class="label">6 · Menaxhimi i rrezikut</div><label class="small" for="risk">Rreziku i synuar për tregti (%)</label><input id="risk" type="number" min="0.1" max="1" step="0.1" value="0.5"><p class="small">Informues. Dashboard-i nuk llogarit lotin nga bilanci dhe nuk dërgon urdhra te brokeri.</p><div class="grid"><div class="box"><div class="label">Modaliteti</div><div class="value neutral">SINJALE / DEMO</div></div><div class="box"><div class="label">Lidhja MT5</div><div class="value">Nuk është lidhur</div></div></div></section>
+<section class="card"><div class="label">7 · Gjendja e sistemit</div><div class="value" id="status">Po niset analiza...</div><p class="small">Rifreskim automatik çdo 60 sekonda. Testoje në demo.</p><div class="notice">Nëse API nuk jep të dhëna të vlefshme, sistemi tregon WAIT. Nuk hap tregti automatikisht dhe nuk garanton fitim.</div></section>
+<footer>ELITE GOLD AI PRO · SNIPER MAX · D1 + H4 + H1 + M15</footer></main>
 <script>
+"use strict";
 const API_PRICE="https://elite-gold-backend.7j5rsrzjrz.workers.dev/api/price";
 const API_CANDLES="https://biquote.io/api/XAUUSD/ohlc?interval=TIME&limit=300";
-const $=id=>document.getElementById(id);
-const fmt=n=>Number.isFinite(n)?n.toFixed(2):"—";
+const $=id=>document.getElementById(id),fmt=n=>Number.isFinite(n)?n.toFixed(2):"—";
+async function getCandles(tf){const r=await fetch(API_CANDLES.replace("TIME",tf),{cache:"no-store"});if(!r.ok)throw Error("API nuk u përgjigj për "+tf);const d=await r.json();if(!Array.isArray(d.bars))throw Error("Formati i qirinjve nuk njihet.");const b=d.bars.filter(x=>!x.isOpen).filter(x=>[x.open,x.high,x.low,x.close].every(v=>Number.isFinite(Number(v)))).reverse().map(x=>({time:x.openTime,open:+x.open,high:+x.high,low:+x.low,close:+x.close}));if(b.length<80)throw Error("Nuk ka mjaft qirinj të mbyllur për "+tf+".");return b}
+function ema(v,p){if(v.length<p)return NaN;let k=2/(p+1),e=v.slice(0,p).reduce((a,b)=>a+b,0)/p;for(let i=p;i<v.length;i++)e=v[i]*k+e*(1-k);return e}
+function rsi(v,p=14){if(v.length<=p)return NaN;let g=0,l=0;for(let i=1;i<=p;i++){let d=v[i]-v[i-1];if(d>0)g+=d;else l-=d}let ag=g/p,al=l/p;for(let i=p+1;i<v.length;i++){let d=v[i]-v[i-1];ag=(ag*(p-1)+Math.max(0,d))/p;al=(al*(p-1)+Math.max(0,-d))/p}return al===0?100:100-100/(1+ag/al)}
+function atr(b,p=14){if(b.length<p+1)return NaN;let t=[];for(let i=1;i<b.length;i++)t.push(Math.max(b[i].high-b[i].low,Math.abs(b[i].high-b[i-1].close),Math.abs(b[i].low-b[i-1].close)));return t.slice(-p).reduce((a,x)=>a+x,0)/p}
+function analyze(b){let c=b.map(x=>x.close);return {bars:b,last:c.at(-1),ema20:ema(c,20),ema50:ema(c,50),rsi:rsi(c),atr:atr(b)}}
+function trend(a){return a.last>a.ema50&&a.ema20>a.ema50?"buy":a.last<a.ema50&&a.ema20<a.ema50?"sell":"neutral"}
+function labelTrend(t){return t==="buy"?"BULLISH":t==="sell"?"BEARISH":"I PËRZIER"}
+function pa(a){let b=a.bars,c=b.at(-1),p=b.at(-2),body=Math.abs(c.close-c.open),range=Math.max(c.high-c.low,.00001),lo=Math.min(c.open,c.close)-c.low,hi=c.high-Math.max(c.open,c.close),be=c.close>c.open&&p.close<p.open&&c.close>=p.open&&c.open<=p.close,se=c.close<p.open&&c.close<c.open&&p.close>p.open&&c.close<=p.open&&c.open>=p.close,bp=lo/range>.55&&body/range<.4&&c.close>c.open,sp=hi/range>.55&&body/range<.4&&c.close<c.open,pr=b.slice(-6,-1),up=pr.length===5&&c.close>Math.max(...pr.map(x=>x.high)),dn=pr.length===5&&c.close<Math.min(...pr.map(x=>x.low));if(be||bp||up)return {dir:"buy",name:be?"Bullish Engulfing":bp?"Bullish Pin Bar":"Breakout lart"};if(se||sp||dn)return {dir:"sell",name:se?"Bearish Engulfing":sp?"Bearish Pin Bar":"Breakout poshtë"};return {dir:"neutral",name:"Pa model të qartë"}}
+function swings(b,n=3){let h=[],l=[];for(let i=n;i<b.length-n;i++){let a=true,z=true;for(let j=i-n;j<=i+n;j++){if(i===j)continue;if(b[j].high>=b[i].high)a=false;if(b[j].low<=b[i].low)z=false}if(a)h.push({i,p:b[i].high});if(z)l.push({i,p:b[i].low})}return {h,l}}
+function choch(a){let b=a.bars,s=swings(b),c=b.at(-1),p=b.at(-2),h=s.h.filter(x=>x.i<b.length-2).at(-1),l=s.l.filter(x=>x.i<b.length-2).at(-1);if(!h||!l)return {dir:"neutral",text:"Pa strukturë të qartë"};if(p.close<=h.p&&c.close>h.p)return {dir:"buy",text:"Bullish CHoCH"};if(p.close>=l.p&&c.close<l.p)return {dir:"sell",text:"Bearish CHoCH"};return {dir:"neutral",text:"Pa CHoCH të ri"}}
+function orderBlock(a){let b=a.bars,n=b.length,c=b.at(-1),s=swings(b),h=s.h.filter(x=>x.i<n-2).at(-1),l=s.l.filter(x=>x.i<n-2).at(-1);if(!h||!l)return {dir:"neutral",text:"Nuk u gjet OB",touched:false};if(c.close>h.p){for(let i=n-2;i>=Math.max(0,n-12);i--)if(b[i].close<b[i].open){let t=c.low<=b[i].high&&c.low>=b[i].low;return {dir:"buy",text:"Bullish OB "+(t?"· retest":"· pa retest"),touched:t}}}if(c.close<l.p){for(let i=n-2;i>=Math.max(0,n-12);i--)if(b[i].close>b[i].open){let t=c.high>=b[i].low&&c.high<=b[i].high;return {dir:"sell",text:"Bearish OB "+(t?"· retest":"· pa retest"),touched:t}}}return {dir:"neutral",text:"Nuk u konfirmua OB",touched:false}}
 
-async function getCandles(tf){
-  const response=await fetch(API_CANDLES.replace("TIME",tf),{cache:"no-store"});
-  if(!response.ok) throw new Error("API nuk u përgjigj për "+tf);
-  const data=await response.json();
-  if(!Array.isArray(data.bars)) throw new Error("Formati i qirinjve nuk njihet.");
-  const bars=data.bars
-    .filter(b=>!b.isOpen)
-    .filter(b=>[b.open,b.high,b.low,b.close].every(v=>Number.isFinite(Number(v))))
-    .reverse()
-    .map(b=>({time:b.openTime,open:+b.open,high:+b.high,low:+b.low,close:+b.close}));
-  if(bars.length<80) throw new Error("Nuk ka mjaft qirinj të mbyllur për "+tf+".");
-  return bars;
-}
-
-function ema(values,period){
-  if(values.length<period)return NaN;
-  const k=2/(period+1);
-  let e=values.slice(0,period).reduce((a,b)=>a+b,0)/period;
-  for(let i=period;i<values.length;i++)e=values[i]*k+e*(1-k);
-  return e;
-}
-
-function rsi(values,period=14){
-  if(values.length<=period)return NaN;
-  let gains=0,losses=0;
-  for(let i=1;i<=period;i++){
-    const d=values[i]-values[i-1];
-    if(d>0)gains+=d;else losses-=d;
-  }
-  let ag=gains/period,al=losses/period;
-  for(let i=period+1;i<values.length;i++){
-    const d=values[i]-values[i-1];
-    ag=(ag*(period-1)+Math.max(0,d))/period;
-    al=(al*(period-1)+Math.max(0,-d))/period;
-  }
-  if(al===0)return 100;
-  return 100-100/(1+ag/al);
-}
-
-function atr(bars,period=14){
-  if(bars.length<period+1)return NaN;
-  const trs=[];
-  for(let i=1;i<bars.length;i++){
-    const b=bars[i],p=bars[i-1];
-    trs.push(Math.max(b.high-b.low,Math.abs(b.high-p.close),Math.abs(b.low-p.close)));
-  }
-  return trs.slice(-period).reduce((a,b)=>a+b,0)/period;
-}
-
-function analyze(bars){
-  const closes=bars.map(b=>b.close);
-  const last=bars[bars.length-1];
-  return {
-    bars,closes,last:last.close,
-    ema20:ema(closes,20),
-    ema50:ema(closes,50),
-    rsi:rsi(closes),
-    atr:atr(bars)
-  };
-}
-
-function trend(a){
-  if(a.last>a.ema50&&a.ema20>a.ema50)return "buy";
-  if(a.last<a.ema50&&a.ema20<a.ema50)return "sell";
-  return "neutral";
-}
-
-function labelTrend(t){
-  return t==="buy"?"BULLISH":t==="sell"?"BEARISH":"I PËRZIER";
-}
-
-function priceAction(a){
-  const b=a.bars,c=b[b.length-1],p=b[b.length-2];
-  const body=Math.abs(c.close-c.open);
-  const range=Math.max(c.high-c.low,0.00001);
-  const lower=Math.min(c.open,c.close)-c.low;
-  const upper=c.high-Math.max(c.open,c.close);
-  const bullEngulf=c.close>c.open&&p.close<p.open&&c.close>=p.open&&c.open<=p.close;
-  const bearEngulf=c.close<c.open&&p.close>p.open&&c.close<=p.open&&c.open>=p.close;
-  const bullPin=lower/range>0.55&&body/range<0.4&&c.close>c.open;
-  const bearPin=upper/range>0.55&&body/range<0.4&&c.close<c.open;
-  const prior=b.slice(-6,-1);
-  const breakoutUp=prior.length===5&&c.close>Math.max(...prior.map(x=>x.high));
-  const breakoutDown=prior.length===5&&c.close<Math.min(...prior.map(x=>x.low));
-  if(bullEngulf||bullPin||breakoutUp)return {dir:"buy",name:bullEngulf?"Bullish Engulfing":bullPin?"Bullish Pin Bar":"Breakout lart"};
-  if(bearEngulf||bearPin||breakoutDown)return {dir:"sell",name:bearEngulf?"Bearish Engulfing":bearPin?"Bearish Pin Bar":"Breakout poshtë"};
-  return {dir:"neutral",name:"Pa model të qartë"};
-}
-
-function structure(a){
-  const b=a.bars,c=b[b.length-1],prior=b.slice(-11,-1);
-  if(prior.length<10)return "Pa të dhëna";
-  if(c.close>Math.max(...prior.map(x=>x.high)))return "BOS bullish";
-  if(c.close<Math.min(...prior.map(x=>x.low)))return "BOS bearish";
-  return "Pa BOS të qartë";
-}
-
-function liquiditySweep(a){
-  const b=a.bars,c=b[b.length-1],prior=b.slice(-11,-1);
-  const high=Math.max(...prior.map(x=>x.high));
-  const low=Math.min(...prior.map(x=>x.low));
-  if(c.high>high&&c.close<high)return "Sweep i maksimumit";
-  if(c.low<low&&c.close>low)return "Sweep i minimumit";
-  return "Nuk u zbulua";
-}
-
-function detectFVG(a){
-  const b=a.bars;
-  if(b.length<3)return "Pa të dhëna";
-  const x=b[b.length-3],z=b[b.length-1];
-  if(z.low>x.high)return "Bullish FVG";
-  if(z.high<x.low)return "Bearish FVG";
-  return "Nuk u zbulua";
-}
-
-async function updatePrice(){
-  try{
-    const r=await fetch(API_PRICE,{cache:"no-store"});
-    if(!r.ok)throw new Error();
-    const d=await r.json();
-    if(!Number.isFinite(Number(d.price)))throw new Error();
-    $("price").textContent="$"+Number(d.price).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
-    $("priceStatus").textContent="API online · "+new Date().toLocaleTimeString("sq-AL")+" · "+(d.source||"Spot");
-  }catch(e){
-    $("priceStatus").textContent="Çmimi spot përkohësisht i padisponueshëm.";
-  }
-}
-
-function setTrend(id,t){
-  $(id).textContent=labelTrend(t);
-  $(id).className="value "+(t==="buy"?"buy":t==="sell"?"sell":"neutral");
-}
-
-async function analyzeMarket(){
-  const btn=$("signalBtn");
-  btn.disabled=true;
-  $("status").textContent="Po analizohen timeframe-t...";
-  $("signal").textContent="DUKE ANALIZUAR";
-  $("signal").className="signal neutral";
-  try{
-    const [d1raw,h4raw,h1raw,m15raw]=await Promise.all([
-      getCandles("1d"),getCandles("4h"),getCandles("1h"),getCandles("15m")
-    ]);
-    const d1=analyze(d1raw),h4=analyze(h4raw),h1=analyze(h1raw),m15=analyze(m15raw);
-    const td1=trend(d1),th4=trend(h4),th1=trend(h1),tm15=trend(m15);
-    const pa1=priceAction(h1),pa15=priceAction(m15);
-    setTrend("trendD1",td1);
-    setTrend("trendH4",th4);
-    setTrend("trendH1",th1);
-    setTrend("trendM15",tm15);
-    $("paH1").textContent=pa1.name;
-    $("paM15").textContent=pa15.name;
-    $("rsi").textContent=fmt(m15.rsi);
-    $("atr").textContent=fmt(m15.atr);
-    $("bos").textContent=structure(h1);
-    $("sweep").textContent=liquiditySweep(m15);
-    $("fvg").textContent=detectFVG(m15);
-    $("regime").textContent=(th4==="neutral"||th1==="neutral")?"RANGE / I PËRZIER":"TREND";
-    
-    const buyChecks=[
-      td1==="buy",th4==="buy",th1==="buy",tm15==="buy",
-      pa1.dir==="buy",pa15.dir==="buy",m15.rsi>=50&&m15.rsi<=68
-    ];
-    const sellChecks=[
-      td1==="sell",th4==="sell",th1==="sell",tm15==="sell",
-      pa1.dir==="sell",pa15.dir==="sell",m15.rsi>=32&&m15.rsi<=50
-    ];
-    const buyScore=buyChecks.filter(Boolean).length;
-    const sellScore=sellChecks.filter(Boolean).length;
-    let signal="WAIT";
-    let why="Timeframe-t nuk janë plotësisht në një drejtim ose mungon konfirmimi. Prit setup më të qartë.";
-    
-    if(buyScore>=6&&td1==="buy"&&th4==="buy"&&th1==="buy"&&tm15==="buy"&&pa15.dir==="buy"){
-      signal="BUY";
-      why="D1, H4, H1 dhe M15 janë bullish; Price Action M15 konfirmon sipas rregullave të thjeshtuara.";
-    }else if(sellScore>=6&&td1==="sell"&&th4==="sell"&&th1==="sell"&&tm15==="sell"&&pa15.dir==="sell"){
-      signal="SELL";
-      why="D1, H4, H1 dhe M15 janë bearish; Price Action M15 konfirmon sipas rregullave të thjeshtuara.";
-    }
-    
-    $("score").textContent="BUY "+buyScore+"/7 · SELL "+sellScore+"/7";
-    $("signal").textContent=signal;
-    $("signal").className="signal "+(signal==="BUY"?"buy":signal==="SELL"?"sell":"neutral");
-    
-    if(signal==="BUY"||signal==="SELL"){
-      const entry=m15.last;
-      const distance=Math.max(m15.atr*1.5,0.5);
-      const buy=signal==="BUY";
-      $("entry").textContent=fmt(entry);
-      $("sl").textContent=fmt(buy?entry-distance:entry+distance);
-      $("tp1").textContent=fmt(buy?entry+distance:entry-distance);
-      $("tp2").textContent=fmt(buy?entry+distance*2:entry-distance*2);
-      $("tp3").textContent=fmt(buy?entry+distance*3:entry-distance*3);
-    }else{
-      $("entry").textContent="—";
-      $("sl").textContent="—";
-      $("tp1").textContent="—";
-      $("tp2").textContent="—";
-      $("tp3").textContent="—";
-    }
-    $("reason").textContent=why;
-    $("updated").textContent="Përditësuar: "+new Date().toLocaleTimeString("sq-AL")+" · Nivelet shfaqen vetëm kur sinjali kalon filtrin.";
-    $("status").textContent="Analiza përfundoi. Verifiko burimet dhe provo në demo.";
-  }catch(e){
-    $("signal").textContent="WAIT · API ERROR";
-    $("signal").className="signal neutral";
-    $("reason").textContent=(e.message||"Të dhënat nuk mund të analizohen.")+" Intervalet D1/H4/H1/M15 duhet të mbështeten nga API.";
-    $("status").textContent="Analiza nuk u krye. Nuk po jepet sinjal pa të dhëna.";
-    $("entry").textContent=$("sl").textContent=$("tp1").textContent=$("tp2").textContent=$("tp3").textContent="—";
-  }finally{
-    btn.disabled=false;
-  }
-}
-
-updatePrice();
-$("signalBtn").addEventListener("click",analyzeMarket);
-setInterval(updatePrice,30000);
-setInterval(analyzeMarket,60000);
-analyzeMarket();
-</script>
-</body>
-</html>
+function structure(a){let b=a.bars,c=b.at(-1),p=b.slice(-11,-1);if(p.length<10)return "Pa të dhëna";if(c.close>Math.max(...p.map(x=>x.high)))return "BOS bullish";if(c.close<Math.min(...p.map(x=>x.low)))return "BOS bearish";return "Pa BOS të qartë"}
+function sweep(a){let b=a.bars,c=b.at(-1),p=b.slice(-11,-1),h=Math.max(...p.map(x=>x.high)),l=Math.min(...p.map(x=>x.low));if(c.high>h&&c.close<h)return "Sweep i maksimumit";if(c.low<l&&c.close>l)return "Sweep i minimumit";return "Nuk u zbulua"}
+function fvg(a){let b=a.bars;if(b.length<3)return "Pa të dhëna";let x=b.at(-3),z=b.at(-1);if(z.low>x.high)return "Bullish FVG";if(z.high<x.low)return "Bearish FVG";return "Nuk u zbulua"}
+async function updatePrice(){try{let r=await fetch(API_PRICE,{cache:"no-store"});if(!r.ok)throw Error();let d=await r.json();if(!Number.isFinite(Number(d.price)))throw Error();$("price").textContent="$"+Number(d.price).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});$("priceStatus").textContent="API online · "+new Date().toLocaleTimeString("sq-AL")+" · "+(d.source||"Spot")}catch(e){$("priceStatus").textContent="Çmimi spot përkohësisht i padisponueshëm."}}
+function setTrend(id,t){$(id).textContent=labelTrend(t);$(id).className="value "+(t==="buy"?"buy":t==="sell"?"sell":"neutral")}
+async function analyzeMarket(){let btn=$("signalBtn");btn.disabled=true;$("status").textContent="Po analizohen timeframe-t...";$("signal").textContent="DUKE ANALIZUAR";$("signal").className="signal neutral";try{
+let raw=await Promise.all([getCandles("1d"),getCandles("4h"),getCandles("1h"),getCandles("15m")]),[d,h4,h1,m]=raw.map(analyze),td=trend(d),t4=trend(h4),t1=trend(h1),tm=trend(m),p1=pa(h1),pm=pa(m),ch=choch(m),ob=orderBlock(m);
+setTrend("trendD1",td);setTrend("trendH4",t4);setTrend("trendH1",t1);setTrend("trendM15",tm);$("paH1").textContent=p1.name;$("paM15").textContent=pm.name;$("rsi").textContent=fmt(m.rsi);$("atr").textContent=fmt(m.atr);$("bos").textContent=structure(h1);$("sweep").textContent=sweep(m);$("fvg").textContent=fvg(m);$("choch").textContent=ch.text;$("ob").textContent=ob.text;$("regime").textContent=t4==="neutral"||t1==="neutral"?"RANGE / I PËRZIER":"TREND";
+let bc=[td==="buy",t4==="buy",t1==="buy",tm==="buy",p1.dir==="buy",pm.dir==="buy",m.rsi>=50&&m.rsi<=68,ch.dir==="buy",ob.dir==="buy"&&ob.touched],sc=[td==="sell",t4==="sell",t1==="sell",tm==="sell",p1.dir==="sell",pm.dir==="sell",m.rsi>=32&&m.rsi<=50,ch.dir==="sell",ob.dir==="sell"&&ob.touched],bs=bc.filter(Boolean).length,ss=sc.filter(Boolean).length,signal="WAIT",why="Konfirmimet nuk përputhen plotësisht. Prit setup më të qartë.";
+if(bs>=8&&td==="buy"&&t4==="buy"&&t1==="buy"&&tm==="buy"&&pm.dir==="buy"&&ch.dir==="buy"&&ob.dir==="buy"&&ob.touched){signal="BUY";why="Drejtimet bullish dhe filtrat CHoCH + OB retest përputhen. Verifiko chart-in."}else if(ss>=8&&td==="sell"&&t4==="sell"&&t1==="sell"&&tm==="sell"&&pm.dir==="sell"&&ch.dir==="sell"&&ob.dir==="sell"&&ob.touched){signal="SELL";why="Drejtimet bearish dhe filtrat CHoCH + OB retest përputhen. Verifiko chart-in."}
+$("score").textContent="BUY "+bs+"/9 · SELL "+ss+"/9";$("signal").textContent=signal;$("signal").className="signal "+(signal==="BUY"?"buy":signal==="SELL"?"sell":"neutral");
+if(signal!=="WAIT"){let e=m.last,dist=Math.max(m.atr*1.5,.5),buy=signal==="BUY";$("entry").textContent=fmt(e);$("sl").textContent=fmt(buy?e-dist:e+dist);$("tp1").textContent=fmt(buy?e+dist:e-dist);$("tp2").textContent=fmt(buy?e+dist*2:e-dist*2);$("tp3").textContent=fmt(buy?e+dist*3:e-dist*3)}else $("entry").textContent=$("sl").textContent=$("tp1").textContent=$("tp2").textContent=$("tp3").textContent="—";
+$("reason").textContent=why;$("updated").textContent="Përditësuar: "+new Date().toLocaleTimeString("sq-AL")+" · Nivelet shfaqen vetëm kur sinjali kalon filtrin.";$("status").textContent="Analiza përfundoi. Verifiko API-n dhe testo në demo.";
+}catch(e){$("signal").textContent="WAIT · API ERROR";$("signal").className="signal neutral";$("reason").textContent=(e.message||"Të dhënat nuk mund të analizohen.")+" Kontrollo nëse API mbështet D1/H4/H1/M15.";$("status").textContent="Analiza nuk u krye. Nuk po jepet sinjal pa të dhëna.";$("entry").textContent=$("sl").textContent=$("tp1").textContent=$("tp2").textContent=$("tp3").textContent="—"}finally{btn.disabled=false}}
+updatePrice();$("signalBtn").addEventListener("click",analyzeMarket);setInterval(updatePrice,30000);setInterval(analyzeMarket,60000);analyzeMarket();
+</script></body></html>
